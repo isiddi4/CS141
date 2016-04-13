@@ -27,23 +27,23 @@ struct Room {
 //prints out the header, board, and instructions
 //
 void header(){
-	cout << endl
+	cout << endl 
 		 << "Author: Ismail Siddiqui           ______18______ " << endl
-		 << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
-		 << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
-		 << "April 3, 2016                  /      /    \\      \\ " << endl
-		 << "System: Sublime Text          /      /      \\      \\ " << endl
-		 << "        on Ubuntu            17     8        10     19 " << endl
-		 << "                            |  \\   / \\      /  \\   / | " << endl
-		 << "Hunt the Wumpus:            |   \\ /   \\    /    \\ /  | " << endl
-		 << "The Wumpus lives in a       |    7     1---2     11  | " << endl
-		 << "completely dark cave of     |    |    /     \\    |   | " << endl
-		 << "20 rooms.  Each room has    |    6—---5     3---12   | " << endl
-		 << "3 tunnels leading to other  |    |     \\   /     |   | " << endl
-		 << "rooms as shown:             |    \\       4      /    | " << endl
-		 << "                            |     \\      |     /     | " << endl
-		 << "                             \\     15---14---13     / " << endl
-		 << "                              \\   /            \\   / " << endl
+	     << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
+	     << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
+	     << "April 3, 2016                  /      /    \\      \\ " << endl
+	     << "System: Sublime Text          /      /      \\      \\ " << endl
+	     << "        on Ubuntu            17     8        10     19 " << endl
+	     << "                            |  \\   / \\      /  \\   / | " << endl
+	     << "Hunt the Wumpus:            |   \\ /   \\    /    \\ /  | " << endl
+	     << "The Wumpus lives in a       |    7     1---2     11  | " << endl
+	     << "completely dark cave of     |    |    /     \\    |   | " << endl
+	     << "20 rooms.  Each room has    |    6—---5     3---12   | " << endl
+	     << "3 tunnels leading to other  |    |     \\   /     |   | " << endl
+	     << "rooms as shown:             |    \\       4      /    | " << endl
+	     << "                            |     \\      |     /     | " << endl
+	     << "                             \\     15---14---13     / " << endl
+	     << "                              \\   /            \\   / " << endl
 	     << "                               \\ /              \\ / " << endl
 	     << "                               16---------------20 " << endl
 	     << "Hazards: " << endl
