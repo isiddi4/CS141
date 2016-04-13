@@ -27,49 +27,49 @@ struct Room {
 //prints out the header, board, and instructions
 //
 void header(){
-	cout    << endl 
-		<< "Author: Ismail Siddiqui           ______18______ " << endl
-	    << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
-	    << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
-	    << "April 3, 2016                  /      /    \\      \\ " << endl
-	    << "System: Sublime Text          /      /      \\      \\ " << endl
-	    << "        on Ubuntu            17     8        10     19 " << endl
-	    << "                            |  \\   / \\      /  \\   / | " << endl
-	    << "Hunt the Wumpus:            |   \\ /   \\    /    \\ /  | " << endl
-	    << "The Wumpus lives in a       |    7     1---2     11  | " << endl
-	    << "completely dark cave of     |    |    /     \\    |   | " << endl
-	    << "20 rooms.  Each room has    |    6—---5     3---12   | " << endl
-	    << "3 tunnels leading to other  |    |     \\   /     |   | " << endl
-	    << "rooms as shown:             |    \\       4      /    | " << endl
-	    << "                            |     \\      |     /     | " << endl
-	    << "                             \\     15---14---13     / " << endl
-	    << "                              \\   /            \\   / " << endl
-	    << "                               \\ /              \\ / " << endl
-	    << "                               16---------------20 " << endl
-	    << "Hazards: " << endl
-	    << "1. Two rooms have bottomless pits in them.  If you go there you fall and die." << endl
-	    << "2. Two other rooms have super-bats.  If you go there, a bats grab you and " << endl
-	    << "   fly you to some random room, which could be troublesome.  Then those bats " << endl
-	    << "   go to some random room. " << endl
-	    << "3. The Wumpus is not bothered by the pits or bats, as he has sucker feet and " << endl
-	    << "   is too heavy for a bat to lift.  Usually he is asleep.  Two things wake " << endl
-	    << "   him up: Anytime you shoot an arrow, or you entering his room.  When he   " << endl
-	    << "   wakes he moves one room 75 percent of the time, staying still the other 25 percent of " << endl
-	    << "   the time. After that, if he is in your room, he eats you and you die! " << endl << endl
-	    << "Moves: " << endl
-	    << "On each move you can: " << endl
-	    << "1. Move into an adjacent room.  To move enter 'M' followed by a space and " << endl
-	    << "   then a room number. " << endl
-	    << "2. Shoot your guided arrow through a list of four adjacent rooms, which " << endl 
-	    << "   you specify.  Your arrow ends up in the final room. If an arrow " << endl
-	    << "   can't go a direction because there is no connecting tunnel, it ricochets " << endl
-	    << "   and moves to a randomly selected adjacent room and continues " << endl
-	    << "   doing this until it has traveled 4 rooms in total.  If the arrow  " << endl 
-	    << "   hits the Wumpus, you win! If the arrow hits you, you lose. You  " << endl
-	    << "   automatically pick up an arrow if you go through a room with an arrow in   " << endl
-	    << "   it. To move enter 'S' followed by a list of up to 4 adjacent room numbers" << endl
-	    << "   separated by spaces." << endl << endl
-	    << "Good Luck!" << endl;
+	cout << endl
+		 << "Author: Ismail Siddiqui           ______18______ " << endl
+		 << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
+		 << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
+		 << "April 3, 2016                  /      /    \\      \\ " << endl
+		 << "System: Sublime Text          /      /      \\      \\ " << endl
+		 << "        on Ubuntu            17     8        10     19 " << endl
+		 << "                            |  \\   / \\      /  \\   / | " << endl
+		 << "Hunt the Wumpus:            |   \\ /   \\    /    \\ /  | " << endl
+		 << "The Wumpus lives in a       |    7     1---2     11  | " << endl
+		 << "completely dark cave of     |    |    /     \\    |   | " << endl
+		 << "20 rooms.  Each room has    |    6—---5     3---12   | " << endl
+		 << "3 tunnels leading to other  |    |     \\   /     |   | " << endl
+		 << "rooms as shown:             |    \\       4      /    | " << endl
+		 << "                            |     \\      |     /     | " << endl
+		 << "                             \\     15---14---13     / " << endl
+		 << "                              \\   /            \\   / " << endl
+	     << "                               \\ /              \\ / " << endl
+	     << "                               16---------------20 " << endl
+	     << "Hazards: " << endl
+	     << "1. Two rooms have bottomless pits in them.  If you go there you fall and die." << endl
+	     << "2. Two other rooms have super-bats.  If you go there, a bats grab you and " << endl
+	     << "   fly you to some random room, which could be troublesome.  Then those bats " << endl
+	     << "   go to some random room. " << endl
+	     << "3. The Wumpus is not bothered by the pits or bats, as he has sucker feet and " << endl
+	     << "   is too heavy for a bat to lift.  Usually he is asleep.  Two things wake " << endl
+	     << "   him up: Anytime you shoot an arrow, or you entering his room.  When he   " << endl
+	     << "   wakes he moves one room 75 percent of the time, staying still the other 25 percent of " << endl
+	     << "   the time. After that, if he is in your room, he eats you and you die! " << endl << endl
+	     << "Moves: " << endl
+	     << "On each move you can: " << endl
+	     << "1. Move into an adjacent room.  To move enter 'M' followed by a space and " << endl
+	     << "   then a room number. " << endl
+	     << "2. Shoot your guided arrow through a list of four adjacent rooms, which " << endl 
+	     << "   you specify.  Your arrow ends up in the final room. If an arrow " << endl
+	     << "   can't go a direction because there is no connecting tunnel, it ricochets " << endl
+	     << "   and moves to a randomly selected adjacent room and continues " << endl
+	     << "   doing this until it has traveled 4 rooms in total.  If the arrow  " << endl 
+	     << "   hits the Wumpus, you win! If the arrow hits you, you lose. You  " << endl
+	     << "   automatically pick up an arrow if you go through a room with an arrow in   " << endl
+	     << "   it. To move enter 'S' followed by a list of up to 4 adjacent room numbers" << endl
+	     << "   separated by spaces." << endl << endl
+	     << "Good Luck!" << endl;
 }//end header----------------------------------------------------------------------------------------------------
 
 
