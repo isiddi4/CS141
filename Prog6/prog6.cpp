@@ -4,8 +4,6 @@
 #include <time.h>
 using namespace std;
 
-const int startRoom = 20;
-
 
 //
 //node that points to all adjacent rooms
@@ -160,7 +158,23 @@ void generateHazard( Room* room[]){
 	room[ randBat1]->hasBat = true;
 	room[ randBat2]->hasBat = true;
 	room[ randWump]->hasWumpus = true;
-}
+}//end generateHazard---------------------------------------------------------------------------------------------
+
+
+//
+//starts the player in a room that has no hazards
+//
+int playerStart( Room* room[], int currentRoom){
+	srand( time( NULL));
+	Room* startRoom = room[ currentRoom];
+
+	while( startRoom->hasPit || startRoom->hasBat || startRoom-> hasWumpus){
+		currentRoom = rand() % 20;
+		startRoom = room[ currentRoom];
+	}
+
+	return currentRoom;
+}//end playerStart------------------------------------------------------------------------------------------------
 
 
 //
@@ -182,11 +196,16 @@ bool canMove( Room* room[], int currentRoom, int playerDest){
 //
 //checks if the room has a hazard in it
 //
-void checkHazard( Room* room[], int currentRoom){
+void executeHazard( Room* room[], int currentRoom){
 	if( room[ currentRoom-1]->hasPit){
-		
+		cout << "You fell into a pit and died! Game over....." << endl;
+		exit( -1);
 	}
-}//end checkHazard------------------------------------------------------------------------------------------------
+	
+	if( room[ currentRoom-1]->hasBat){
+		//change the current room		
+	}
+}//end executeHazard----------------------------------------------------------------------------------------------
 
 
 //
@@ -218,16 +237,18 @@ void playerInput( Room* room[], int &currentRoom){
 
 
 int main() {
+	srand( time( NULL));
 	Room* room[ 20];
-	int currentRoom = startRoom;
+	int currentRoom = rand() % 20;
 	
 	header();	
 	initRooms( room);
 	generateHazard( room);
+	currentRoom = playerStart( room, currentRoom) + 1;
 
 	while( true) {
 		playerInput( room, currentRoom);	
-		checkHazard( room, currentRoom);
+		executeHazard( room, currentRoom);
 	}
 
 	return 0;
