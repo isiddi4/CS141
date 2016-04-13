@@ -27,8 +27,8 @@ struct Room {
 //prints out the header, board, and instructions
 //
 void header(){
-	cout << endl 
-		 << "Author: Ismail Siddiqui           ______18______ " << endl
+	cout << endl
+	<< "Author: Ismail Siddiqui           ______18______ " << endl	
 	     << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
 	     << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
 	     << "April 3, 2016                  /      /    \\      \\ " << endl
