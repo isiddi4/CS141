@@ -1,7 +1,17 @@
 #include <iostream>
 #include <cctype>
+#include <stdlib.h>
+#include <time.h>
 using namespace std;
 
+const int startRoom = 20;
+
+
+//
+//node that points to all adjacent rooms
+//stores the current room#
+//checks to see if there is a hazard/wumpus
+//
 struct Room {
 	int roomNum;
 	Room* roomNext1;
@@ -10,8 +20,12 @@ struct Room {
 	bool hasWumpus;
 	bool hasPit;
 	bool hasBat;
-};
+};//end struct----------------------------------------------------------------------------------------------------
 
+
+//
+//prints out the header, board, and instructions
+//
 void header(){
 cout    << endl 
 		<< "Author: Ismail Siddiqui           ______18______ " << endl
@@ -56,11 +70,13 @@ cout    << endl
 	    << "   it. To move enter 'S' followed by a list of up to 4 adjacent room numbers" << endl
 	    << "   separated by spaces." << endl << endl
 	    << "Good Luck!" << endl;
-}
+}//end header----------------------------------------------------------------------------------------------------
 
 
+//
 //initializes room numbers, pointers, and other variables
 //takes an array of Room pointers
+//
 void initRooms( Room* room[]){
 	//initialize room variables
 	for( int i = 0; i < 20; i++){
@@ -75,7 +91,7 @@ void initRooms( Room* room[]){
 			room[ i-1]->roomNext2 = room[ i];
 		}
 	}
-
+	//
 	//initialize room pointers
 	for( int i = 0; i < 4; i++){
 		//
@@ -100,27 +116,119 @@ void initRooms( Room* room[]){
 	//connect room 16 and 20
 	room[ 15]->roomNext3 = room[ 19];
 	room[ 19]->roomNext2 = room[ 15];
+}//end initRooms--------------------------------------------------------------------------------------------------
+
+
+//
+//make sure the hazards are all in unique rooms
+//if not, adjust accordingly
+void sameRoomChecker( int &randPit1, int &randPit2, int &randBat1, int &randBat2, int &randWump){
+	//while the first pit's room is the same as any of the other hazard rooms	
+	while( randPit1 == randPit2 || randPit1 == randBat1 || randPit1 == randBat2 || randPit1 == randWump)
+		randPit1 = rand() % 20;
+	
+	//while the second pit's room is the same as any of the other hazard rooms
+	while( randPit2 == randBat1 || randPit2 == randBat2 || randPit2 == randWump)
+		randPit1 = rand() % 20;
+
+	//while the first super bat's room is the same as any of the other hazard rooms
+	while( randBat1 == randBat2 || randBat1 == randWump)
+		randPit1 = rand() % 20;
+
+	//while the second super bat's room is the same as any of the other hazard rooms
+	while( randBat2 == randWump)
+		randPit1 = rand() % 20;
+}//end sameRoomChecker--------------------------------------------------------------------------------------------
+
+
+//
+//creates the room that has the hazards
+//
+void generateHazard( Room* room[]){
+	srand( time( NULL));
+	int randPit1 = rand() % 20,
+		randPit2 = rand() % 20,
+		randBat1 = rand() % 20,
+		randBat2 = rand() % 20,
+		randWump = rand() % 20;
+
+	sameRoomChecker( randPit1, randPit2, randBat1, randBat2, randWump);
+
+	//set the rooms with hazards on accordingly
+	room[ randPit1]->hasPit = true;
+	room[ randPit2]->hasPit = true;
+	room[ randBat1]->hasBat = true;
+	room[ randBat2]->hasBat = true;
+	room[ randWump]->hasWumpus = true;
 }
 
 
-void playerInput( Room* room[]){
-	char playerMove = 'F';
+//
+//checks to see if the user input a valid room destination
+//
+bool canMove( Room* room[], int currentRoom, int playerDest){
+	int nextRoom1 = room[ currentRoom-1]->roomNext1->roomNum;
+	int nextRoom2 = room[ currentRoom-1]->roomNext2->roomNum;
+	int nextRoom3 = room[ currentRoom-1]->roomNext3->roomNum;
+
+	if( playerDest != nextRoom1 && playerDest != nextRoom2 && playerDest != nextRoom3){
+		cout << "Invalid location. Please retry...." << endl;
+		return false;
+	} else 
+		return true;
+}//end canMove----------------------------------------------------------------------------------------------------
+
+
+//
+//checks if the room has a hazard in it
+//
+void checkHazard( Room* room[], int currentRoom){
+	if( room[ currentRoom-1]->hasPit){
+		
+	}
+}//end checkHazard------------------------------------------------------------------------------------------------
+
+
+//
+//takes the player input
+//
+void playerInput( Room* room[], int &currentRoom){
+	char playerMove = ' ';
 	int playerDest = 0;
 	
-	cout << "Your move: ";
-	cin >> playerMove >> playerDest;
-	cout << playerMove << "-------"  << playerDest << endl;
-}
+	cout << "You are currently in room " << currentRoom << endl;
+	
+	while( true){
+		cout << "Your move: ";
+		cin >> playerMove >> playerDest;
+		
+		//checks validity of input
+		if( playerDest > 20 || playerDest < 1){
+			cout << "The destination you wish reach is outside the movable range. Please retry...." << endl;
+			continue;
+		} else if( playerMove == 'm' || playerMove == 'M'){
+			if( canMove( room, currentRoom, playerDest))
+				break;
+		} else
+			cout << "Invalid move type. Please retry...." << endl;
+	}
+
+	currentRoom = playerDest;
+}//end playerInput------------------------------------------------------------------------------------------------
 
 
 int main() {
 	Room* room[ 20];
-
-	//header();
-
+	int currentRoom = startRoom;
+	
+	header();	
 	initRooms( room);
+	generateHazard( room);
 
-	playerInput( room);
+	while( true) {
+		playerInput( room, currentRoom);	
+		checkHazard( room, currentRoom);
+	}
 
 	return 0;
 }
