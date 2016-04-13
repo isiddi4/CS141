@@ -28,7 +28,7 @@ struct Room {
 //
 void header(){
 	cout    << endl 
-	<< "Author: Ismail Siddiqui           ______18______ " << endl
+		<< "Author: Ismail Siddiqui           ______18______ " << endl
 	    << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
 	    << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
 	    << "April 3, 2016                  /      /    \\      \\ " << endl
@@ -146,11 +146,11 @@ void sameRoomChecker( int &randPit1, int &randPit2, int &randBat1, int &randBat2
 //
 void generateHazard( Room* room[]){
 	srand( time( NULL));
-	int randPit1 = rand() % 20;
-	int	randPit2 = rand() % 20;
-	int	randBat1 = rand() % 20;
-	int	randBat2 = rand() % 20;
-	int	randWump = rand() % 20;
+	int randPit1 = rand() % 20;  
+	int randPit2 = rand() % 20;  
+	int randBat1 = rand() % 20;  
+	int randBat2 = rand() % 20;  
+	int randWump = rand() % 20;
 
 	sameRoomChecker( randPit1, randPit2, randBat1, randBat2, randWump);
 
