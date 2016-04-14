@@ -11,13 +11,13 @@ using namespace std;
 //checks to see if there is a hazard/wumpus
 //
 struct Room {
-	int roomNum;
-	Room* roomNext1;
+	int roomNum;		//the room the node represents
+	Room* roomNext1;	//the rooms adjacent the node
 	Room* roomNext2;
 	Room* roomNext3;
-	bool hasWumpus;
-	bool hasPit;
-	bool hasBat;
+	bool hasWumpus;		//variable to check if wumpus is in the room
+	bool hasPit;		//variable to check if there is a pit in the room
+	bool hasBat;		//variable to check if super bats are in the room
 };//end struct----------------------------------------------------------------------------------------------------
 
 
@@ -94,7 +94,6 @@ void initRooms( Room* room[]){
 	for( int i = 0; i < 4; i++){
 		//
 		//connect the inner pentagons to the outer ones
-		//
 		//inner most to second rank
 		room[ i]->roomNext3 = room[ i*2+7];
 		room[ i*2+7]->roomNext3 = room[ i];
@@ -104,7 +103,6 @@ void initRooms( Room* room[]){
 	}
 	//
 	//leftover connections
-	//
 	//connect room 1 and 5
 	room[ 0]->roomNext1 = room[ 4];
 	room[ 4]->roomNext3 = room[ 0];
@@ -194,21 +192,6 @@ bool canMove( Room* room[], int currentRoom, int playerDest){
 
 
 //
-//checks if the room has a hazard in it
-//
-void executeHazard( Room* room[], int currentRoom){
-	if( room[ currentRoom-1]->hasPit){
-		cout << "You fell into a pit and died! Game over....." << endl;
-		exit( -1);
-	}
-	
-	if( room[ currentRoom-1]->hasBat){
-		//change the current room		
-	}
-}//end executeHazard----------------------------------------------------------------------------------------------
-
-
-//
 //takes the player input
 //
 void playerInput( Room* room[], int &currentRoom){
@@ -236,6 +219,41 @@ void playerInput( Room* room[], int &currentRoom){
 }//end playerInput------------------------------------------------------------------------------------------------
 
 
+//alert the player of mulitple hazards at once? --piazza
+//
+//checks if there is a hazard in an adjacent room
+//alerts player if there is a hazard in an adjacent room
+void checkForHazard( Room* room[], int currentRoom){
+	Room* nextRoom1 = room[ currentRoom-1]->roomNext1;
+	Room* nextRoom2 = room[ currentRoom-1]->roomNext2;
+	Room* nextRoom3 = room[ currentRoom-1]->roomNext3;
+
+	//alert the player if there is a pit/bat/wumpus in a room next to the current one
+	if( nextRoom1->hasPit || nextRoom2->hasPit || nextRoom3->hasPit)
+		cout << "You feel a light breeze..." << endl;
+	if( nextRoom1->hasBat || nextRoom2->hasBat || nextRoom3->hasBat)
+		cout << "You hear flapping...." << endl;
+	if( nextRoom1->hasWumpus || nextRoom2->hasWumpus || nextRoom3->hasWumpus)
+		cout << "You smell a Wumpus" << endl;
+}//end checkForHazard---------------------------------------------------------------------------------------------
+
+//
+//checks if the room has a hazard in it
+//
+void executeHazard( Room* room[], int currentRoom){
+	//checks for pit
+	if( room[ currentRoom-1]->hasPit){
+		cout << "You fell into a pit and died! Game over....." << endl;
+		exit( -1);
+	}
+	//checks for bats
+	if( room[ currentRoom-1]->hasBat){
+		cout << "Super bats flew you away! ";
+		//change the current room		
+	}
+}//end executeHazard----------------------------------------------------------------------------------------------
+
+
 int main() {
 	srand( time( NULL));
 	Room* room[ 20];
@@ -247,7 +265,8 @@ int main() {
 	currentRoom = playerStart( room, currentRoom) + 1;
 
 	while( true) {
-		playerInput( room, currentRoom);	
+		playerInput( room, currentRoom);
+		checkForHazard( room, currentRoom);	
 		executeHazard( room, currentRoom);
 	}
 
