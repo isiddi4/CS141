@@ -9,7 +9,6 @@ using namespace std;
 //node that points to all adjacent rooms
 //stores the current room#
 //checks to see if there is a hazard/wumpus
-//
 struct Room {
 	int roomNum;		//the room the node represents
 	Room* roomNext1;	//the rooms adjacent the node
@@ -18,17 +17,27 @@ struct Room {
 	bool hasWumpus;		//variable to check if wumpus is in the room
 	bool hasPit;		//variable to check if there is a pit in the room
 	bool hasBat;		//variable to check if super bats are in the room
-};//end struct----------------------------------------------------------------------------------------------------
+	bool hasArrow;		//variable to check if the arrow is in the room
+};
 
+
+//
+//struct that stores player location,
+//whether or not they have an arrow, 
+//and whether or not they have fired an arrow
+struct Player {
+	int location;
+	bool hasArrow;
+	bool firedArrow;
+};
 
 //
 //prints out the header, board, and instructions
-//
 void header(){
 	cout << endl
 	     << "Author: Ismail Siddiqui           ______18______ " << endl	
 	     << "CS 141 Program #6: Wumpus        /      |       \\ " << endl
-	     << "TA: Itica Gupta, T 11:00 AM     /      _9__      \\ " << endl
+	     << "TA: Itica Gupta, T 11:00 AM     /  s    _9__      \\ " << endl
 	     << "April 3, 2016                  /      /    \\      \\ " << endl
 	     << "System: Sublime Text          /      /      \\      \\ " << endl
 	     << "        on Ubuntu            17     8        10     19 " << endl
@@ -46,11 +55,11 @@ void header(){
 	     << "                               16---------------20 " << endl
 	     << "Hazards: " << endl
 	     << "1. Two rooms have bottomless pits in them.  If you go there you fall and die." << endl
-	     << "2. Two other rooms have super-bats.  If you go there, a bats grab you and " << endl
-	     << "   fly you to some random room, which could be troublesome.  Then those bats " << endl
+	     << "2. Two other rooms have super-bats.  If you go there, a bat grabs you and " << endl
+	     << "   flys you to some random room, which could be troublesome. Then those bats " << endl
 	     << "   go to some random room. " << endl
 	     << "3. The Wumpus is not bothered by the pits or bats, as he has sucker feet and " << endl
-	     << "   is too heavy for a bat to lift.  Usually he is asleep.  Two things wake " << endl
+	     << "   is too heavy for a bat to lift. Usually he is asleep. Two things wake " << endl
 	     << "   him up: Anytime you shoot an arrow, or you entering his room.  When he   " << endl
 	     << "   wakes he moves one room 75 percent of the time, staying still the other 25 percent of " << endl
 	     << "   the time. After that, if he is in your room, he eats you and you die! " << endl << endl
@@ -74,7 +83,6 @@ void header(){
 //
 //initializes room numbers, pointers, and other variables
 //takes an array of Room pointers
-//
 void initRooms( Room* room[]){
 	//initialize room variables
 	for( int i = 0; i < 20; i++){
@@ -83,16 +91,17 @@ void initRooms( Room* room[]){
 		room[ i]->hasWumpus = false;
 		room[ i]->hasPit = false;
 		room[ i]->hasBat = false;
+		room[ i]->hasArrow = false;
 		//connent the current room to the next room
 		if( i != 0){
 			room[ i]->roomNext1 = room[ i-1];
 			room[ i-1]->roomNext2 = room[ i];
 		}
 	}
-	//
+
 	//initialize room pointers
 	for( int i = 0; i < 4; i++){
-		//
+		
 		//connect the inner pentagons to the outer ones
 		//inner most to second rank
 		room[ i]->roomNext3 = room[ i*2+7];
@@ -101,7 +110,7 @@ void initRooms( Room* room[]){
 		room[ i*2+6]->roomNext3 = room[ 16+i];
 		room[ 16+i]->roomNext3 = room[ i*2+6]; 	
 	}
-	//
+	
 	//leftover connections
 	//connect room 1 and 5
 	room[ 0]->roomNext1 = room[ 4];
@@ -125,21 +134,20 @@ void sameRoomChecker( int &randPit1, int &randPit2, int &randBat1, int &randBat2
 	
 	//while the second pit's room is the same as any of the other hazard rooms
 	while( randPit2 == randBat1 || randPit2 == randBat2 || randPit2 == randWump)
-		randPit1 = rand() % 20;
+		randPit2 = rand() % 20;
 
 	//while the first super bat's room is the same as any of the other hazard rooms
 	while( randBat1 == randBat2 || randBat1 == randWump)
-		randPit1 = rand() % 20;
+		randBat1 = rand() % 20;
 
 	//while the second super bat's room is the same as any of the other hazard rooms
 	while( randBat2 == randWump)
-		randPit1 = rand() % 20;
+		randBat2 = rand() % 20;
 }//end sameRoomChecker--------------------------------------------------------------------------------------------
 
 
 //
 //creates the room that has the hazards
-//
 void generateHazard( Room* room[]){
 	srand( time( NULL));
 	int randPit1 = rand() % 20;  
@@ -161,9 +169,10 @@ void generateHazard( Room* room[]){
 
 //
 //starts the player in a room that has no hazards
-//
-int playerStart( Room* room[], int currentRoom){
+int playerStart( Room* room[], Player player){
 	srand( time( NULL));
+
+	int currentRoom = player.location;
 	Room* startRoom = room[ currentRoom];
 
 	while( startRoom->hasPit || startRoom->hasBat || startRoom-> hasWumpus){
@@ -177,11 +186,10 @@ int playerStart( Room* room[], int currentRoom){
 
 //
 //checks to see if the user input a valid room destination
-//
-bool canMove( Room* room[], int currentRoom, int playerDest){
-	int nextRoom1 = room[ currentRoom-1]->roomNext1->roomNum;
-	int nextRoom2 = room[ currentRoom-1]->roomNext2->roomNum;
-	int nextRoom3 = room[ currentRoom-1]->roomNext3->roomNum;
+bool canMove( Room* room[], Player player, int playerDest){
+	int nextRoom1 = room[ player.location]->roomNext1->roomNum;
+	int nextRoom2 = room[ player.location]->roomNext2->roomNum;
+	int nextRoom3 = room[ player.location]->roomNext3->roomNum;
 
 	if( playerDest != nextRoom1 && playerDest != nextRoom2 && playerDest != nextRoom3){
 		cout << "Invalid location. Please retry...." << endl;
@@ -193,12 +201,11 @@ bool canMove( Room* room[], int currentRoom, int playerDest){
 
 //
 //takes the player input
-//
-void playerInput( Room* room[], int &currentRoom){
+void playerInput( Room* room[], Player &player){
 	char playerMove = ' ';
-	int playerDest = 0;
+	int playerDest = player.location;
 	
-	cout << "You are currently in room " << currentRoom << endl;
+	cout << "You are currently in room " << player.location + 1 << endl;
 	
 	while( true){
 		cout << "Your move: ";
@@ -209,65 +216,99 @@ void playerInput( Room* room[], int &currentRoom){
 			cout << "The destination you wish reach is outside the movable range. Please retry...." << endl;
 			continue;
 		} else if( playerMove == 'm' || playerMove == 'M'){
-			if( canMove( room, currentRoom, playerDest))
+			if( canMove( room, player, playerDest))
 				break;
 		} else
 			cout << "Invalid move type. Please retry...." << endl;
 	}
 
-	currentRoom = playerDest;
+	player.location = playerDest - 1;
 }//end playerInput------------------------------------------------------------------------------------------------
 
 
-//alert the player of mulitple hazards at once? --piazza
 //
 //checks if there is a hazard in an adjacent room
 //alerts player if there is a hazard in an adjacent room
-void checkForHazard( Room* room[], int currentRoom){
-	Room* nextRoom1 = room[ currentRoom-1]->roomNext1;
-	Room* nextRoom2 = room[ currentRoom-1]->roomNext2;
-	Room* nextRoom3 = room[ currentRoom-1]->roomNext3;
+void checkForHazard( Room* room[], Player player){
+	Room* nextRoom1 = room[ player.location]->roomNext1;
+	Room* nextRoom2 = room[ player.location]->roomNext2;
+	Room* nextRoom3 = room[ player.location]->roomNext3;
 
 	//alert the player if there is a pit/bat/wumpus in a room next to the current one
 	if( nextRoom1->hasPit || nextRoom2->hasPit || nextRoom3->hasPit)
-		cout << "You feel a light breeze..." << endl;
+		cout << "----You feel a light breeze" << endl;
 	if( nextRoom1->hasBat || nextRoom2->hasBat || nextRoom3->hasBat)
-		cout << "You hear flapping...." << endl;
+		cout << "----You hear flapping" << endl;
 	if( nextRoom1->hasWumpus || nextRoom2->hasWumpus || nextRoom3->hasWumpus)
-		cout << "You smell a Wumpus" << endl;
+		cout << "----You smell a Wumpus" << endl;
 }//end checkForHazard---------------------------------------------------------------------------------------------
+
+
+//
+//implements the superbat hazard
+//changes the player's current room and change's the bat's current room
+void superBats( Room* room[], Player &player){
+	srand( time( NULL));
+	Room* batRoom = NULL;			//new room for the superbats
+	int batLoc = 0;
+
+	//clear the bats from the room
+	room[ player.location]->hasBat = false;
+	
+	//assign a new room to the player
+	player.location = rand() % 20;
+	cout << "Super bats carried you away to room " << player.location + 1 << "!" << endl;
+	
+	//move the bats
+	batLoc = rand() % 20;
+	batRoom = room[ batLoc];
+	
+	//make sure there are no other hazards in that room and check if the player is in that room
+	while( batRoom->hasPit || batRoom->hasBat || batRoom->hasWumpus || batRoom->roomNum == ( player.location-1)){
+		batLoc = rand() % 20;
+		batRoom = room[ batLoc];
+	}
+
+	room[ batLoc]->hasBat = true;
+}//end superBats--------------------------------------------------------------------------------------------------
+
 
 //
 //checks if the room has a hazard in it
-//
-void executeHazard( Room* room[], int currentRoom){
+void executeHazard( Room* room[], Player &player){
 	//checks for pit
-	if( room[ currentRoom-1]->hasPit){
+	if( room[ player.location]->hasPit){
 		cout << "You fell into a pit and died! Game over....." << endl;
 		exit( -1);
 	}
+	
 	//checks for bats
-	if( room[ currentRoom-1]->hasBat){
-		cout << "Super bats flew you away! ";
-		//change the current room		
+	if( room[ player.location]->hasBat){
+		//change the current room
+		superBats( room, player);
+		executeHazard( room, player);
 	}
 }//end executeHazard----------------------------------------------------------------------------------------------
 
 
 int main() {
 	srand( time( NULL));
-	Room* room[ 20];
-	int currentRoom = rand() % 20;
 	
+	Room* room[ 20];					//array of structs containing all the rooms
+	Player player;						//struct for player
+	player.location = rand() % 20;		//pending starting location for the player
+	player.hasArrow = true;				//start with an arrow
+	player.firedArrow = false;			//have not yet fired an arrow
+
 	header();	
 	initRooms( room);
 	generateHazard( room);
-	currentRoom = playerStart( room, currentRoom) + 1;
+	player.location = playerStart( room, player);
 
 	while( true) {
-		playerInput( room, currentRoom);
-		checkForHazard( room, currentRoom);	
-		executeHazard( room, currentRoom);
+		playerInput( room, player);
+		executeHazard( room, player);
+		checkForHazard( room, player);	
 	}
 
 	return 0;
